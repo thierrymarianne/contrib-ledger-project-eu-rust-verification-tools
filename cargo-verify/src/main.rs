@@ -93,6 +93,7 @@ pub struct Opt {
     #[structopt(long)]
     replace_backend_flags: bool,
 
+    /// Use the value of '--nightly' to determine if the nightly build of rustc is used
     #[structopt(long)]
     nightly: bool,
 
