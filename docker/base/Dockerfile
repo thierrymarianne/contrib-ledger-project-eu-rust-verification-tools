@@ -38,6 +38,7 @@ RUN apt-get --yes update \
   llvm-10-dev \
   llvm-11 \
   llvm-11-dev \
+  libsodium-dev \
   ncurses-doc \
   ninja-build \
   perl \
@@ -49,6 +50,7 @@ RUN apt-get --yes update \
   subversion \
   sudo \
   unzip \
+  vim \
   wget \
   # Cleanup
   && apt-get clean \
