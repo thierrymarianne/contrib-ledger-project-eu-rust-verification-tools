@@ -93,6 +93,9 @@ pub struct Opt {
     #[structopt(long)]
     replace_backend_flags: bool,
 
+    #[structopt(long)]
+    nightly: bool,
+
     /// Specifiy the location of 'verify_c_common'
     #[structopt(long, value_name = "PATH", env = "SEAHORN_VERIFY_C_COMMON_DIR")]
     seahorn_verify_c_common_dir: Option<String>,
@@ -730,6 +733,11 @@ fn get_build_envs(opt: &Opt) -> CVResult<Vec<(String, String)>> {
 /// to be linked with the bcfile.
 fn compile(opt: &Opt, package: &str, target: &str) -> CVResult<(PathBuf, Vec<PathBuf>)> {
     let mut cmd = Command::new("cargo");
+
+    if opt.nightly {
+        cmd.arg("+nightly");
+    }
+
     cmd.arg("build").arg("--manifest-path").arg(&opt.cargo_toml);
 
     if !opt.features.is_empty() {
