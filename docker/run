@@ -1,14 +1,25 @@
 #!/usr/bin/env bash
 
-source $(dirname "$(realpath -s "$0")")/sudo_if_needed.bash
+function run_rvt() {
+    source $(dirname "$(realpath -s "$0")")/sudo_if_needed.bash
 
-readonly RVT_SRC=$(dirname "$(realpath -s "$0")")/..
-readonly RVT_DST=/home/rust-verification-tools
+    readonly RVT_SRC=$(dirname "$(realpath -s "$0")")/..
+    readonly RVT_DST=/home/rust-verification-tools
 
-readonly MOUNT_PWD="type=bind,source=${PWD},target=${PWD}"
-readonly MOUNT_RVT="type=bind,source=${RVT_SRC},target=${RVT_DST}"
+    readonly MOUNT_PWD="type=bind,source=${PWD},target=${PWD}"
+    readonly MOUNT_RVT="type=bind,source=${RVT_SRC},target=${RVT_DST}"
 
-# based on https://dzone.com/articles/docker-x11-client-via-ssh
-readonly X11="--net=host --env=DISPLAY --volume=$HOME/.Xauthority:/home/$USER/.Xauthority:rw"
+    # based on https://dzone.com/articles/docker-x11-client-via-ssh
+    readonly X11="--net=host --env=DISPLAY --volume=$HOME/.Xauthority:/home/$USER/.Xauthority:rw"
 
-sudo_if_needed docker run --rm --mount ${MOUNT_RVT} --mount ${MOUNT_PWD} --workdir ${PWD} ${X11} -it rvt_r2ct:latest "$@"
+    if [ -z $MOUNT_SOURCE ]; then
+        echo 'Please export the path to the source to be verified e.g.'
+        echo 'export MOUNT_SOURCE=/tmp/project'
+        return
+    fi
+
+    sudo_if_needed docker run --rm \
+        --mount "type=bind,source=${MOUNT_SOURCE},target=/source" \
+        --mount ${MOUNT_RVT} --mount ${MOUNT_PWD} --workdir ${PWD} ${X11} -it rvt_r2ct:latest "$@"
+}
+run_rvt
