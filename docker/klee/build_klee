@@ -14,7 +14,14 @@ readonly UCLIBC_DIR=`pwd`
 make -j 4
 cd ..
 
-git clone --no-checkout https://github.com/klee/klee.git
+
+if [ "${LLVM_VERSION}" = 12 ];
+then
+    git clone --no-checkout https://github.com/thierrymarianne/contrib-klee.git -b llvm12 klee
+else
+    git clone --no-checkout https://github.com/klee/klee.git
+fi
+
 cd klee
 git checkout ${KLEE_VERSION}
 

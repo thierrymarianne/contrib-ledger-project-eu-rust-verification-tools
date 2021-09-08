@@ -74,7 +74,7 @@ jobs:
 
           - llvm: 12
             rustc_version: nightly-2021-07-29
-            klee_version: df04aeadefb4e1c34c7ef8b9123947ff045a34d9
+            klee_version: 2ea638415501008f6b7a078bae98b8393949dfff
 
     steps:
 
