@@ -13,6 +13,9 @@ RUN apt-get --yes update \
   clang-11 \
   clang-format-11 \
   clang-tools-11 \
+  clang-12 \
+  clang-format-12 \
+  clang-tools-12 \
   gcc-multilib \
   g++-7-multilib \
   cmake \
@@ -32,16 +35,21 @@ RUN apt-get --yes update \
   lib32stdc++-7-dev \
   libgmp-dev \
   libgmpxx4ldbl \
+  libzmq3-dev \
   lld-10 \
   lld-11 \
+  lld-12 \
   llvm-10 \
   llvm-10-dev \
   llvm-11 \
   llvm-11-dev \
+  llvm-12 \
+  llvm-12-dev \
   ncurses-doc \
   ninja-build \
   perl \
   pkg-config \
+  protobuf-compiler \
   python \
   python3 \
   python3-minimal \
@@ -49,6 +57,7 @@ RUN apt-get --yes update \
   subversion \
   sudo \
   unzip \
+  vim \
   wget \
   # Cleanup
   && apt-get clean \

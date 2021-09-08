@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 echo To build LLVM11 version, use 'env LLVM11=yes docker/build'
+echo To build LLVM12 version, use 'env LLVM12=yes docker/build'
 
 set -e
 

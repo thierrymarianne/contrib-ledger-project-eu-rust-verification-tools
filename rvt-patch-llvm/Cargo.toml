@@ -12,8 +12,9 @@ stderrlog = "0.5"
 structopt = "0.3"
 regex = "0.2"
 
-inkwell = { git = "https://github.com/alastairreid/inkwell" }
+inkwell = { git = "https://github.com/thierrymarianne/contrib-inkwell", branch = "llvm-12" }
 
 [features]
 llvm10 = ["inkwell/llvm10-0"]
 llvm11 = ["inkwell/llvm11-0"]
+llvm12 = ["inkwell/llvm12-0"]

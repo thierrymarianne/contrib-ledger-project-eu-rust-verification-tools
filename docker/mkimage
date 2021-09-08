@@ -23,8 +23,14 @@ readonly FROM_IMAGE_FOR_SEAHORN=${FROM_IMAGE_FOR_SEAHORN:-rvt_klee:latest}
 readonly FROM_IMAGE_FOR_RVT=${FROM_IMAGE_FOR_RVT:-rvt_seahorn:latest}
 readonly FROM_IMAGE_FOR_RVT_R2CT=${FROM_IMAGE_FOR_RVT_R2CT:-rvt:latest}
 
-if [ -v LLVM11 ]; then
+if [ ! -z "${LLVM12}" ]; then
+  echo '=> Build for LLVM 12'
+  RUSTC_VERSION=nightly-2021-07-29
+  LLVM_VERSION=12
+  KLEE_VERSION="df04aeadefb4e1c34c7ef8b9123947ff045a34d9"
+elif [ ! -z "${LLVM11}" ]; then
   # Version used in Rust for Linux
+  echo '=> Build for LLVM 11'
   RUSTC_VERSION=nightly-2021-02-20
   LLVM_VERSION=11
   KLEE_VERSION="abdb0b650b8fce419dc5695e037557708f374021"

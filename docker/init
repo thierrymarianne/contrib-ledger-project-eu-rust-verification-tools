@@ -2,7 +2,11 @@
 
 set -e
 
-# Build libraries
+# Cleaning before building libraries
+make -C ${RVT_DIR}/runtime clean
+make -C ${RVT_DIR}/simd_emulation clean
+
+echo 'About to build runtime and simd_emulation'
 make -C ${RVT_DIR}/runtime TGT=klee
 make -C ${RVT_DIR}/runtime TGT=seahorn
 make -C ${RVT_DIR}/simd_emulation
@@ -10,5 +14,9 @@ make -C ${RVT_DIR}/simd_emulation
 # Build tools
 mkdir -p ${USER_HOME}/bin
 cargo +nightly install --root=${USER_HOME} --path=${RVT_DIR}/rust2calltree
-cargo +nightly install --features=llvm${LLVM_VERSION} --root=${USER_HOME} --path=${RVT_DIR}/rvt-patch-llvm
-cargo +nightly install --root=${USER_HOME} --path=${RVT_DIR}/cargo-verify
+
+cargo +nightly install --features=llvm${LLVM_VERSION} --root=${USER_HOME} --path=${RVT_DIR}/rvt-patch-llvm && \
+echo '=> Successfully installed rvt-patch-llvm'
+
+cargo +nightly install --root=${USER_HOME} --path=${RVT_DIR}/cargo-verify && \
+echo '=> Successfully installed cargo-verify'

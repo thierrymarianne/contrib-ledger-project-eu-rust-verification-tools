@@ -19,7 +19,7 @@ use inkwell::memory_buffer::MemoryBuffer;
 use inkwell::module::Linkage;
 use inkwell::module::Module;
 use inkwell::types::{AnyType, FunctionType};
-use inkwell::values::{AnyValue, BasicValue, BasicValueEnum};
+use inkwell::values::{AnyValue, BasicValue, BasicValueEnum, CallableValue};
 use inkwell::values::{FunctionValue, GlobalValue, PointerValue};
 use inkwell::AddressSpace;
 
@@ -285,7 +285,8 @@ fn build_fanout<'a>(
     builder.position_at_end(basic_block);
 
     for fp in fps {
-        builder.build_call(fp, &args, "");
+        let callable_value = CallableValue::try_from(fp).unwrap();
+        builder.build_call(callable_value, &args, "");
         builder.build_return(None);
         // println!("Built function {:?}", function)
     }

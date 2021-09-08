@@ -61,7 +61,7 @@ jobs:
         uclibc_version: [klee_uclibc_v1.2]
         yices_version: [2.6.2]
         z3_version: [4.8.7]
-        llvm: [10, 11]
+        llvm: [10, 11, 12]
 
         include:
           - llvm: 10
@@ -71,6 +71,10 @@ jobs:
           - llvm: 11
             rustc_version: nightly-2021-02-20
             klee_version: abdb0b650b8fce419dc5695e037557708f374021
+
+          - llvm: 12
+            rustc_version: nightly-2021-07-29
+            klee_version: df04aeadefb4e1c34c7ef8b9123947ff045a34d9
 
     steps:
 
