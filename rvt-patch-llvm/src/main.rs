@@ -12,6 +12,7 @@ use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::path::PathBuf;
 use structopt::StructOpt;
+use std::convert::TryFrom;
 
 use inkwell::builder::Builder;
 use inkwell::context::Context;
