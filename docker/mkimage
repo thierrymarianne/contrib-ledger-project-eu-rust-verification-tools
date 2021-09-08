@@ -53,7 +53,7 @@ sudo_if_needed docker build \
   --build-arg=USERNAME="$DOCKER_USER" \
   --build-arg=USER_UID="$DOCKER_UID" \
   --build-arg=USER_GID="$DOCKER_GID" \
-  --build-arg=UBUNTU_VERSION="20.04" \
+  --build-arg=UBUNTU_VERSION="focal-20210827" \
   --build-arg=GTEST_VERSION="1.7.0" \
   --build-arg=LLVM_VERSION="${LLVM_VERSION}" \
   --build-arg=KLEE_VERSION="${KLEE_VERSION}" \
