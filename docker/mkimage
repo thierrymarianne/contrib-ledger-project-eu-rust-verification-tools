@@ -4,7 +4,6 @@ source $(dirname "$(realpath -s "$0")")/sudo_if_needed.bash
 
 readonly DOCKER_IMAGE_NAME="$1"
 readonly DOCKER_FILE="$2"
-readonly DOCKER_VERSION="latest"
 
 echo Making docker image ${DOCKER_IMAGE_NAME}:${DOCKER_VERSION} using ${DOCKER_FILE}
 
@@ -16,12 +15,6 @@ echo Making docker image ${DOCKER_IMAGE_NAME}:${DOCKER_VERSION} using ${DOCKER_F
 readonly DOCKER_UID="${UID:-0}"
 readonly DOCKER_GID="$(id -g)"
 readonly DOCKER_USER="${USER:-root}"
-
-readonly FROM_IMAGE_FOR_SOLVERS=${FROM_IMAGE_FOR_SOLVERS:-rvt_base:latest}
-readonly FROM_IMAGE_FOR_KLEE=${FROM_IMAGE_FOR_KLEE:-rvt_solvers:latest}
-readonly FROM_IMAGE_FOR_SEAHORN=${FROM_IMAGE_FOR_SEAHORN:-rvt_klee:latest}
-readonly FROM_IMAGE_FOR_RVT=${FROM_IMAGE_FOR_RVT:-rvt_seahorn:latest}
-readonly FROM_IMAGE_FOR_RVT_R2CT=${FROM_IMAGE_FOR_RVT_R2CT:-rvt:latest}
 
 if [ ! -z "${LLVM12}" ]; then
   echo '=> Build for LLVM 12'
@@ -40,6 +33,16 @@ else
   LLVM_VERSION=10
   KLEE_VERSION="c51ffcd377097ee80ec9b0d6f07f8ea583a5aa1d"
 fi
+
+readonly DOCKER_VERSION=$(date -I 2>&1 | tr '-' "_")_LLVM_${LLVM_VERSION}
+
+readonly FROM_IMAGE_FOR_SOLVERS=${FROM_IMAGE_FOR_SOLVERS:-rvt_base:${DOCKER_VERSION}}
+readonly FROM_IMAGE_FOR_KLEE=${FROM_IMAGE_FOR_KLEE:-rvt_solvers:${DOCKER_VERSION}}
+readonly FROM_IMAGE_FOR_SEAHORN=${FROM_IMAGE_FOR_SEAHORN:-rvt_klee:${DOCKER_VERSION}}
+readonly FROM_IMAGE_FOR_RVT=${FROM_IMAGE_FOR_RVT:-rvt_seahorn:${DOCKER_VERSION}}
+readonly FROM_IMAGE_FOR_RVT_R2CT=${FROM_IMAGE_FOR_RVT_R2CT:-rvt:${DOCKER_VERSION}}
+
+echo "=> About to build image tagged \"${DOCKER_IMAGE_NAME}:${DOCKER_VERSION}\""
 
 sudo_if_needed docker build \
   --file=${DOCKER_FILE} \
