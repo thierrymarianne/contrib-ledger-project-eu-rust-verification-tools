@@ -5,7 +5,32 @@ source $(dirname "$(realpath -s "$0")")/sudo_if_needed.bash
 readonly DOCKER_IMAGE_NAME="$1"
 readonly DOCKER_FILE="$2"
 
-echo Making docker image ${DOCKER_IMAGE_NAME}:${DOCKER_VERSION} using ${DOCKER_FILE}
+readonly IMAGE_PREFIX=${DOCKER_IMAGE_PREFIX:-}
+
+if [ ! -z "${LLVM12}" ]; then
+  echo '=> Build for LLVM 12'
+  RUSTC_VERSION=nightly-2021-07-29
+  LLVM_VERSION=12
+  KLEE_VERSION="master"
+  UCLIBC_VERSION="klee_0_9_29"
+elif [ ! -z "${LLVM11}" ]; then
+  # Version used in Rust for Linux
+  echo '=> Build for LLVM 11'
+  RUSTC_VERSION=nightly-2021-02-20
+  LLVM_VERSION=11
+  KLEE_VERSION="abdb0b650b8fce419dc5695e037557708f374021"
+  UCLIBC_VERSION="klee_uclibc_v1.2"
+else
+  # Last version based on LLVM-10
+  RUSTC_VERSION=nightly-2020-08-03
+  LLVM_VERSION=10
+  KLEE_VERSION="c51ffcd377097ee80ec9b0d6f07f8ea583a5aa1d"
+  UCLIBC_VERSION="klee_uclibc_v1.2"
+fi
+
+readonly DOCKER_VERSION=$(date -I 2>&1 | tr '-' "_")_LLVM_${LLVM_VERSION}
+
+echo Making docker image ${IMAGE_PREFIX}${DOCKER_IMAGE_NAME}:${DOCKER_VERSION} using ${DOCKER_FILE}
 
 # The default user for a Docker container has uid 0 (root). To avoid creating
 # root-owned files in the build directory we tell Docker to use the current user
@@ -16,38 +41,18 @@ readonly DOCKER_UID="${UID:-0}"
 readonly DOCKER_GID="$(id -g)"
 readonly DOCKER_USER="${USER:-root}"
 
-if [ ! -z "${LLVM12}" ]; then
-  echo '=> Build for LLVM 12'
-  RUSTC_VERSION=nightly-2021-07-29
-  LLVM_VERSION=12
-  KLEE_VERSION="2ea638415501008f6b7a078bae98b8393949dfff"
-elif [ ! -z "${LLVM11}" ]; then
-  # Version used in Rust for Linux
-  echo '=> Build for LLVM 11'
-  RUSTC_VERSION=nightly-2021-02-20
-  LLVM_VERSION=11
-  KLEE_VERSION="abdb0b650b8fce419dc5695e037557708f374021"
-else
-  # Last version based on LLVM-10
-  RUSTC_VERSION=nightly-2020-08-03
-  LLVM_VERSION=10
-  KLEE_VERSION="c51ffcd377097ee80ec9b0d6f07f8ea583a5aa1d"
-fi
+readonly FROM_IMAGE_FOR_SOLVERS=${IMAGE_PREFIX}${FROM_IMAGE_FOR_SOLVERS:-rvt_base}":${DOCKER_VERSION}"
+readonly FROM_IMAGE_FOR_KLEE=${IMAGE_PREFIX}${FROM_IMAGE_FOR_KLEE:-rvt_solvers}":${DOCKER_VERSION}"
+readonly FROM_IMAGE_FOR_SEAHORN=${IMAGE_PREFIX}${FROM_IMAGE_FOR_SEAHORN:-rvt_klee}":${DOCKER_VERSION}"
+readonly FROM_IMAGE_FOR_RVT=${IMAGE_PREFIX}${FROM_IMAGE_FOR_RVT:-rvt_seahorn}":${DOCKER_VERSION}"
+readonly FROM_IMAGE_FOR_RVT_R2CT=${IMAGE_PREFIX}${FROM_IMAGE_FOR_RVT_R2CT:-rvt}":${DOCKER_VERSION}"
 
-readonly DOCKER_VERSION=$(date -I 2>&1 | tr '-' "_")_LLVM_${LLVM_VERSION}
-
-readonly FROM_IMAGE_FOR_SOLVERS=${FROM_IMAGE_FOR_SOLVERS:-rvt_base:${DOCKER_VERSION}}
-readonly FROM_IMAGE_FOR_KLEE=${FROM_IMAGE_FOR_KLEE:-rvt_solvers:${DOCKER_VERSION}}
-readonly FROM_IMAGE_FOR_SEAHORN=${FROM_IMAGE_FOR_SEAHORN:-rvt_klee:${DOCKER_VERSION}}
-readonly FROM_IMAGE_FOR_RVT=${FROM_IMAGE_FOR_RVT:-rvt_seahorn:${DOCKER_VERSION}}
-readonly FROM_IMAGE_FOR_RVT_R2CT=${FROM_IMAGE_FOR_RVT_R2CT:-rvt:${DOCKER_VERSION}}
-
-echo "=> About to build image tagged \"${DOCKER_IMAGE_NAME}:${DOCKER_VERSION}\""
+echo "=> About to build image tagged \"${IMAGE_PREFIX}${DOCKER_IMAGE_NAME}:${DOCKER_VERSION}\""
 
 sudo_if_needed docker build \
   --file=${DOCKER_FILE} \
-  --cache-from="${DOCKER_IMAGE_NAME}:${DOCKER_VERSION}" \
-  --tag="${DOCKER_IMAGE_NAME}:${DOCKER_VERSION}" \
+  --cache-from="${IMAGE_PREFIX}${DOCKER_IMAGE_NAME}:${DOCKER_VERSION}" \
+  --tag="${IMAGE_PREFIX}${DOCKER_IMAGE_NAME}:${DOCKER_VERSION}" \
   --build-arg=FROM_IMAGE_FOR_SOLVERS="$FROM_IMAGE_FOR_SOLVERS" \
   --build-arg=FROM_IMAGE_FOR_KLEE="$FROM_IMAGE_FOR_KLEE" \
   --build-arg=FROM_IMAGE_FOR_SEAHORN="$FROM_IMAGE_FOR_SEAHORN" \
@@ -65,7 +70,7 @@ sudo_if_needed docker build \
   --build-arg=STP_VERSION="2.3.3" \
   --build-arg=SEAHORN_VERIFY_C_COMMON_VERSION="70129bf47c421d8283785a8fb13cdb216424ef91" \
   --build-arg=SEAHORN_VERSION="ccdc529f81a02e9236ffa00ff57eef4487f0fc9a" \
-  --build-arg=UCLIBC_VERSION="klee_uclibc_v1.2" \
+  --build-arg=UCLIBC_VERSION="${UCLIBC_VERSION}" \
   --build-arg=YICES_VERSION="2.6.2" \
   --build-arg=Z3_VERSION="4.8.7" \
   . 1>&2

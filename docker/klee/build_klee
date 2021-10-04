@@ -8,25 +8,30 @@ readonly LLVM_CONFIG=`which llvm-config-${LLVM_VERSION}`
 
 git clone https://github.com/klee/klee-uclibc.git
 cd klee-uclibc
-git checkout ${UCLIBC_VERSION}
+
+if [ "${LLVM_VERSION}" = "12" ];
+then
+    command="git checkout -B ${UCLIBC_VERSION} origin/${UCLIBC_VERSION}"
+    echo "About to run:"
+    echo "${command}"
+    /bin/bash -c "${command}"
+else
+    cd klee-uclibc
+    git checkout ${UCLIBC_VERSION}
+fi
+
 readonly UCLIBC_DIR=`pwd`
 ./configure --make-llvm-lib --with-cc="${LLVMCC}" --with-llvm-config="${LLVM_CONFIG}"
 make -j 4
 cd ..
 
-
-if [ "${LLVM_VERSION}" = 12 ];
-then
-    git clone --no-checkout https://github.com/thierrymarianne/contrib-klee.git -b llvm12 klee
-else
-    git clone --no-checkout https://github.com/klee/klee.git
-fi
-
+git clone --no-checkout https://github.com/klee/klee.git
 cd klee
 git checkout ${KLEE_VERSION}
 
 mkdir build
 cd build
+
 cmake \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DENABLE_SOLVER_STP=ON \
