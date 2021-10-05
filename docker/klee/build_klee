@@ -11,12 +11,10 @@ cd klee-uclibc
 
 if [ "${LLVM_VERSION}" = "12" ];
 then
-    command="git checkout -B ${UCLIBC_VERSION} origin/${UCLIBC_VERSION}"
+    command="git checkout ${UCLIBC_VERSION}"
     echo "About to run:"
     echo "${command}"
-    /bin/bash -c "${command}"
 else
-    cd klee-uclibc
     git checkout ${UCLIBC_VERSION}
 fi
 

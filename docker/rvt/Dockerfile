@@ -27,10 +27,8 @@ ENV RUSTC_VERSION=${RUSTC_VERSION}
 # We do not set it as the default though because we want to use the
 # version of rustc and lib{core,std} that we built before
 # and, in particular, we have to use a version of rustc that uses LLVM-10.
-RUN rustup toolchain install ${RUSTC_VERSION}
-
 RUN echo Installing ${RUSTC_VERSION}
-RUN rustup toolchain install ${RUSTC_VERSION} --profile=minimal
+RUN rustup toolchain install ${RUSTC_VERSION}
 RUN rustup default ${RUSTC_VERSION}
 
 # Prebuild all the tools and libraries

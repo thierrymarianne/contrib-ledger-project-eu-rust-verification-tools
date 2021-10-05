@@ -454,7 +454,8 @@ fn handle_panic(context: &Context, module: &Module) {
 fn replace_def_with_dec(module: &Module, re: &Regex) {
     for fun in get_function_by_regex(module, re) {
         delete_body(&fun);
-        fun.remove_personality_function();
+        // We're not using Seahorn right now
+        //fun.remove_personality_function();
         fun.set_linkage(Linkage::External);
         info!(
             "Removed the implementation of '{}'.",

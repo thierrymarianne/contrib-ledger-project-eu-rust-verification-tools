@@ -9,10 +9,10 @@ readonly IMAGE_PREFIX=${DOCKER_IMAGE_PREFIX:-}
 
 if [ ! -z "${LLVM12}" ]; then
   echo '=> Build for LLVM 12'
-  RUSTC_VERSION=nightly-2021-07-29
+  RUSTC_VERSION=nightly-2021-05-06
   LLVM_VERSION=12
   KLEE_VERSION="master"
-  UCLIBC_VERSION="klee_0_9_29"
+  UCLIBC_VERSION="klee_uclibc_v1.2"
 elif [ ! -z "${LLVM11}" ]; then
   # Version used in Rust for Linux
   echo '=> Build for LLVM 11'
@@ -28,7 +28,7 @@ else
   UCLIBC_VERSION="klee_uclibc_v1.2"
 fi
 
-readonly DOCKER_VERSION=$(date -I 2>&1 | tr '-' "_")_LLVM_${LLVM_VERSION}
+readonly DOCKER_VERSION=$(date -I 2>&1 | tr '-' "_")_LLVM_${LLVM_VERSION}_${RUSTC_VERSION}_${UCLIBC_VERSION}${INKWELL_BRANCH:-}
 
 echo Making docker image ${IMAGE_PREFIX}${DOCKER_IMAGE_NAME}:${DOCKER_VERSION} using ${DOCKER_FILE}
 
