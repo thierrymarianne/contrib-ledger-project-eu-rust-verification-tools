@@ -14,6 +14,7 @@ then
     command="git checkout ${UCLIBC_VERSION}"
     echo "About to run:"
     echo "${command}"
+    /bin/bash -c "${command}"
 else
     git checkout ${UCLIBC_VERSION}
 fi
@@ -35,6 +36,10 @@ cmake \
   -DENABLE_SOLVER_STP=ON \
   -DENABLE_SOLVER_Z3=ON \
   -DENABLE_KLEE_UCLIBC=ON \
+  -DENABLE_SYSTEM_TESTS=ON \
+  -DENABLE_UNIT_TESTS=ON \
+  -DLIT_TOOL=`which lit` \
+  -DENABLE_TCMALLOC=ON \
   -DENABLE_POSIX_RUNTIME=ON \
   -DKLEE_UCLIBC_PATH="${UCLIBC_DIR}" \
   -DLLVMCC="${LLVMCC}" \
@@ -43,7 +48,9 @@ cmake \
   -DENABLE_UNIT_TESTS=ON \
   -DGTEST_SRC_DIR=${GTEST_DIR} \
   ..
+
 make -j 4
-# make check
 sudo make install
+make check
+make unittests
 make clean
