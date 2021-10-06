@@ -20,7 +20,7 @@ use inkwell::memory_buffer::MemoryBuffer;
 use inkwell::module::Linkage;
 use inkwell::module::Module;
 use inkwell::types::{AnyType, FunctionType};
-use inkwell::values::{AnyValue, BasicValue, BasicValueEnum, CallableValue};
+use inkwell::values::{AnyValue, StructValue, BasicValue, BasicValueEnum, CallableValue};
 use inkwell::values::{FunctionValue, GlobalValue, PointerValue};
 use inkwell::AddressSpace;
 
@@ -253,11 +253,25 @@ fn collect_variables_in_section<'a>(module: &Module<'a>, prefix: &str) -> Vec<Gl
 /// some other type.
 fn get_initializer_function<'a>(v: &GlobalValue<'a>) -> PointerValue<'a> {
     let i = v.get_initializer().unwrap().into_struct_value();
+    // assert!(i.get_num_operands() == 2); // expecting two fields in struct
+    // let i = i.get_operand(0).unwrap();
+    // assert!(i.get_num_operands() == 1); // expecting bitcast
+    // let fp = i.get_operand(0).unwrap();
+    // fp.into_pointer_value()
+
     assert!(i.get_num_operands() == 2); // expecting two fields in struct
-    let i = i.get_operand(0).unwrap();
-    assert!(i.get_num_operands() == 1); // expecting bitcast
-    let fp = i.get_operand(0).unwrap();
-    fp.into_pointer_value()
+
+    let bv = i.get_operand(0).unwrap().left().unwrap();
+
+    match bv {
+        BasicValueEnum::PointerValue(value) => {
+            assert!(value.get_num_operands() == 1); // expecting bitcast
+            let fp = value.get_operand(0).unwrap().left().unwrap();
+
+            fp.into_pointer_value()
+        },
+        _ => unreachable!()
+    }
 }
 
 /// Given a list of functions of type 'ty', build a function that calls each function in order
@@ -286,11 +300,20 @@ fn build_fanout<'a>(
     builder.position_at_end(basic_block);
 
     for fp in fps {
+        println!("Pointer value {:?}", fp);
+        println!("Args {:?}", args);
+
+        // let pointer_value = fp.as_pointer_value();
+        //
         let callable_value = CallableValue::try_from(fp).unwrap();
+        //
+        // println!("Built call from {:?}", fp);
+        //
         builder.build_call(callable_value, &args, "");
         builder.build_return(None);
-        // println!("Built function {:?}", function)
     }
+
+    println!("Function value {:?}", function);
 
     function
 }
