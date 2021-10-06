@@ -9,10 +9,10 @@
 use log::info;
 use regex::Regex;
 use std::collections::HashMap;
+use std::convert::TryFrom;
 use std::ffi::OsStr;
 use std::path::PathBuf;
 use structopt::StructOpt;
-use std::convert::TryFrom;
 
 use inkwell::builder::Builder;
 use inkwell::context::Context;
@@ -20,7 +20,7 @@ use inkwell::memory_buffer::MemoryBuffer;
 use inkwell::module::Linkage;
 use inkwell::module::Module;
 use inkwell::types::{AnyType, FunctionType};
-use inkwell::values::{AnyValue, StructValue, BasicValue, BasicValueEnum, CallableValue};
+use inkwell::values::{AnyValue, BasicValue, BasicValueEnum, CallableValue, StructValue};
 use inkwell::values::{FunctionValue, GlobalValue, PointerValue};
 use inkwell::AddressSpace;
 
@@ -269,8 +269,8 @@ fn get_initializer_function<'a>(v: &GlobalValue<'a>) -> PointerValue<'a> {
             let fp = value.get_operand(0).unwrap().left().unwrap();
 
             fp.into_pointer_value()
-        },
-        _ => unreachable!()
+        }
+        _ => unreachable!(),
     }
 }
 
