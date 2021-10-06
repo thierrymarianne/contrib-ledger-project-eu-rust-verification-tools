@@ -300,8 +300,7 @@ fn build_fanout<'a>(
     builder.position_at_end(basic_block);
 
     for fp in fps {
-        println!("Pointer value {:?}", fp);
-        println!("Args {:?}", args);
+        println!("Built pointer value {:?}", fp);
 
         // let pointer_value = fp.as_pointer_value();
         //
@@ -313,7 +312,7 @@ fn build_fanout<'a>(
         builder.build_return(None);
     }
 
-    println!("Function value {:?}", function);
+    println!("Built function {:?}", function);
 
     function
 }
