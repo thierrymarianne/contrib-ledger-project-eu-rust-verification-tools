@@ -9,7 +9,7 @@ readonly IMAGE_PREFIX=${DOCKER_IMAGE_PREFIX:-}
 
 if [ ! -z "${LLVM12}" ]; then
   echo '=> Build for LLVM 12'
-  RUSTC_VERSION=nightly-2021-05-06
+  RUSTC_VERSION=nightly-2021-07-29
   LLVM_VERSION=12
   KLEE_VERSION="master"
   UCLIBC_VERSION="klee_uclibc_v1.2"
