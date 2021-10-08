@@ -2,13 +2,32 @@
 
 source $(dirname "$(realpath -s "$0")")/sudo_if_needed.bash
 
-readonly RVT_SRC=$(dirname "$(realpath -s "$0")")/..
-readonly RVT_DST=/home/rust-verification-tools
+function run_rvt() {
+        readonly RVT_SRC=$(dirname "$(realpath -s "$0")")/..
+        readonly RVT_DST=/home/rust-verification-tools
 
-readonly MOUNT_PWD="type=bind,source=${PWD},target=${PWD}"
-readonly MOUNT_RVT="type=bind,source=${RVT_SRC},target=${RVT_DST}"
+        if [ -z "${MOUNT_SOURCE}" ];
+        then
+                echo 'Empty source path'
+                echo 'export MOUNT_SOURCE=`/path/to/source/to/be/verified`'
+                return 1
+        fi
 
-# based on https://dzone.com/articles/docker-x11-client-via-ssh
-readonly X11="--net=host --env=DISPLAY --volume=$HOME/.Xauthority:/home/$USER/.Xauthority:rw"
+        readonly MOUNT_PWD="type=bind,source=${PWD},target=${PWD}"
+        readonly MOUNT_RVT="type=bind,source=${RVT_SRC},target=${RVT_DST}"
+        readonly MOUNT_SRC="type=bind,source=${MOUNT_SOURCE},target=/source"
 
-sudo_if_needed docker run --rm --mount ${MOUNT_RVT} --mount ${MOUNT_PWD} --workdir ${PWD} ${X11} -it rvt_r2ct:latest "$@"
+        # based on https://dzone.com/articles/docker-x11-client-via-ssh
+        readonly X11="--net=host --env=DISPLAY --volume=$HOME/.Xauthority:/home/$USER/.Xauthority:rw"
+
+        local image
+        image='rvt_r2ct:latest'
+        if [ ! -z "${FROM_IMAGE_FOR_RVT_R2CT}" ];
+        then
+            image="${FROM_IMAGE_FOR_RVT_R2CT}"
+        fi
+
+        sudo_if_needed docker run --rm --mount ${MOUNT_RVT} \
+        --mount ${MOUNT_SRC} --mount ${MOUNT_PWD} --workdir ${PWD} ${X11} -it ${image} "$@"
+}
+run_rvt
