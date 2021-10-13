@@ -53,7 +53,7 @@ function run_rvt() {
     source_mount=''
     if [ -n "${MOUNT_SOURCE}" ];
     then
-        source_mount='--mount "type=bind,source=${MOUNT_SOURCE},target=/source"'
+        source_mount='--mount "type=bind,source=${MOUNT_SOURCE},target=/safepkt-ink/examples/source"'
     fi
 
     local run_options
@@ -73,7 +73,9 @@ function run_rvt() {
 
     local command
     command="source ${source_location}/sudo_if_needed.bash && \
-    sudo_if_needed docker run --rm ${run_options}\
+    sudo_if_needed docker run \
+        --user 1000:1000 \
+        --rm ${run_options}\
         ${source_mount} \
         --mount ${MOUNT_RVT} \
         --mount ${MOUNT_PWD} \
