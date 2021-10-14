@@ -13,12 +13,12 @@ make -C ${RVT_DIR}/simd_emulation
 
 # Build tools
 mkdir -p ${USER_HOME}/bin
-cargo install --root=${USER_HOME} --path=${RVT_DIR}/rust2calltree
+cargo +nightly install --root=${USER_HOME} --path=${RVT_DIR}/rust2calltree
 
-cargo install --features=llvm${LLVM_VERSION} --root=${USER_HOME} --path=${RVT_DIR}/rvt-patch-llvm && \
+cargo +nightly install --features=llvm${LLVM_VERSION} --root=${USER_HOME} --path=${RVT_DIR}/rvt-patch-llvm && \
 echo '=> Successfully installed rvt-patch-llvm'
 
-cargo install --root=${USER_HOME} --path=${RVT_DIR}/cargo-verify && \
+cargo +nightly install --root=${USER_HOME} --path=${RVT_DIR}/cargo-verify && \
 echo '=> Successfully installed cargo-verify'
 
 sudo ln -s llvm-symbolizer-${LLVM_VERSION} /usr/bin/llvm-symbolizer && \
