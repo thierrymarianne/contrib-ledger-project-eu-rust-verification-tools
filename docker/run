@@ -9,8 +9,7 @@ function run_rvt() {
     local help
     help=''
 
-    if [ "${arguments[0]}" == '--help' ];
-    then
+    if [ "${arguments[0]}" == '--help' ]; then
         help='Here are some tips:'
         arguments=("${arguments[@]:1}")
     fi
@@ -20,10 +19,9 @@ function run_rvt() {
     readonly MOUNT_RVT="type=bind,source=${RVT_SRC},target=${RVT_DST}"
 
     # based on https://dzone.com/articles/docker-x11-client-via-ssh
-    readonly X11="--net=host --env=DISPLAY --volume=$HOME/.Xauthority:/home/$USER/.Xauthority:rw"
+    readonly X11="--net=host --env=DISPLAY"
 
-    if [ -n "${help}" ];
-    then
+    if [ -n "${help}" ]; then
         echo ''
         echo "${help}"
         echo ''
@@ -49,20 +47,17 @@ function run_rvt() {
 
     local source_mount
     source_mount=''
-    if [ -n "${MOUNT_SOURCE}" ];
-    then
+    if [ -n "${MOUNT_SOURCE}" ]; then
         source_mount='--mount "type=bind,source=${MOUNT_SOURCE},target=/safepkt-ink/examples/source"'
     fi
 
     local run_options
     run_options="-ti "
-    if [ -n "${run_in_detached_mode}" ];
-    then
+    if [ -n "${run_in_detached_mode}" ]; then
         run_options="-d "
     fi
 
-    if [ -z "${FROM_IMAGE_FOR_RVT_R2CT}" ];
-    then
+    if [ -z "${FROM_IMAGE_FOR_RVT_R2CT}" ]; then
         FROM_IMAGE_FOR_RVT_R2CT='rvt_r2ct:latest'
     fi
 
@@ -73,14 +68,14 @@ function run_rvt() {
     command="source ${source_location}/sudo_if_needed.bash && \
     sudo_if_needed docker run \
         --user 1000:1000 \
+        --name verifier \
         --rm ${run_options}\
         ${source_mount} \
         --mount ${MOUNT_RVT} \
-        --workdir ${PWD} ${X11} \
+        --workdir /safepkt-ink/examples/source ${X11} \
         ${FROM_IMAGE_FOR_RVT_R2CT} ""${arguments}"
 
-    if [ -n "${DEBUG}" ];
-    then
+    if [ -n "${DEBUG}" ]; then
         echo 'About to run command:'
         echo "${command}"
     fi
