@@ -1,5 +1,14 @@
 # Rust verification tools
 
+This project has been forked the context of the European [NGI LEDGER program](https://ledger-3rd-open-call.fundingbox.com/).
+
+This toolset is a requirement of a prototype aiming at bringing more automation  
+to the field of software verification tools targeting rust-based programs.
+
+See [SafePKT description](https://ledgerproject.github.io/home/#/teams/SafePKT)
+
+## Description
+
 This is a collection of tools/libraries to support both static
 and dynamic verification of Rust programs.
 
@@ -127,6 +136,18 @@ We would like the `propverify` library and the `cargo-verify` script
 to work with as many Rust verification tools as possible
 and we welcome pull requests to add support.
 We expect that this will require design/interface changes.
+
+## Acknowledgmenents
+
+We're very grateful towards the following organizations, projects and people:
+ - the Project Oak maintainers for making [Rust Verifications Tools](https://project-oak.github.io/rust-verification-tools/), a dual-licensed open-source project (MIT / Apache).  
+ The RVT tools allowed us to integrate with industrial-grade verification tools in a very effective way. 
+ - the KLEE Symbolic Execution Engine maintainers
+ - the Rust community at large
+ - All members of the NGI-Ledger Consortium for accompanying us
+ [![Blumorpho](../main/img/blumorpho-logo.png?raw=true)](https://www.blumorpho.com/) [![Dyne](../main/img/dyne-logo.png?raw=true)](https://www.dyne.org/ledger/)  
+ [![FundingBox](../main/img/funding-box-logo.png?raw=true)](https://fundingbox.com/) [![NGI LEDGER](../main/img/ledger-eu-logo.png?raw=true)](https://ledgerproject.eu/)  
+ [![European Commission](../main/img/european-commission-logo.png?raw=true)](https://ec.europa.eu/programmes/horizon2020/en/home)
 
 ### Contribution
 
